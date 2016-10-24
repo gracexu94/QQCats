@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 #include "Cucumber.generated.h"
 
 UCLASS()
-class QQCATS_API ACucumber : public AActor
+class QQCATS_API ACucumber : public APawn
 {
 	GENERATED_BODY()
 	
@@ -20,7 +20,11 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
 	UBoxComponent* CucumberBoxComponent;
 	UMaterial* CucumberMaterial;
 	
+	void Drop();
 };
