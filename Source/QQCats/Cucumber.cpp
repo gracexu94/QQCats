@@ -32,16 +32,3 @@ void ACucumber::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 }
-
-// Called to bind functionality to input void 
-void ACucumber::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
-	Super::SetupPlayerInputComponent(InputComponent);
-
-	InputComponent->BindAction("DropCucumber", EInputEvent::IE_Pressed, this, &ACucumber::Drop);
-}
-
-void ACucumber::Drop() {
-	UE_LOG(LogTemp, Warning, TEXT("DROPPPPP"));
-
-	CucumberBoxComponent->SetEnableGravity(true);
-}

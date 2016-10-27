@@ -77,6 +77,8 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+	void DropCucumber();
+
 	struct TouchData
 	{
 		TouchData() { bIsPressed = false;Location=FVector::ZeroVector;}

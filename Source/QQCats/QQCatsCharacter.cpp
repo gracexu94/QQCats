@@ -88,6 +88,9 @@ void AQQCatsCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAxis("TurnRate", this, &AQQCatsCharacter::TurnAtRate);
 	InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	InputComponent->BindAxis("LookUpRate", this, &AQQCatsCharacter::LookUpAtRate);
+
+
+	InputComponent->BindAction("DropCucumber", IE_Pressed, this, &AQQCatsCharacter::DropCucumber);
 }
 
 void AQQCatsCharacter::OnFire()
@@ -214,6 +217,10 @@ void AQQCatsCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AQQCatsCharacter::DropCucumber() {
+	UE_LOG(LogTemp, Warning, TEXT("DROPPPPP"));
 }
 
 bool AQQCatsCharacter::EnableTouchscreenMovement(class UInputComponent* InputComponent)
