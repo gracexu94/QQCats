@@ -20,7 +20,8 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	UBoxComponent* CucumberBoxComponent;
+	UPROPERTY(EditDefaultsOnly)
+	USceneComponent* CucumberRootComponent;
 	UMaterial* CucumberMaterial;
 	
 	void Drop();

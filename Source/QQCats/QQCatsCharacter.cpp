@@ -5,6 +5,7 @@
 #include "QQCatsProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
+#include "Cucumber.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -58,7 +59,7 @@ void AQQCatsCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh component to Skeleton, doing it here because the skelton is not yet created in the constructor
+	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh component to Skeleton, doing it here because the skelton is not yet created in the constructor
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,7 +107,7 @@ void AQQCatsCharacter::OnFire()
 		if (World != NULL)
 		{
 			// spawn the projectile at the muzzle
-			World->SpawnActor<AQQCatsProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+			World->SpawnActor<ACucumber>(ProjectileClass, SpawnLocation, SpawnRotation);
 		}
 	}
 
@@ -221,6 +222,21 @@ void AQQCatsCharacter::LookUpAtRate(float Rate)
 
 void AQQCatsCharacter::DropCucumber() {
 	UE_LOG(LogTemp, Warning, TEXT("DROPPPPP"));
+
+	// try and fire a projectile
+	if (ProjectileClass != NULL)
+	{
+		const FRotator SpawnRotation = GetControlRotation();
+		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+		const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+
+		UWorld* const World = GetWorld();
+		if (World != NULL)
+		{
+			// spawn the projectile at the muzzle
+			World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+		}
+	} 
 }
 
 bool AQQCatsCharacter::EnableTouchscreenMovement(class UInputComponent* InputComponent)
