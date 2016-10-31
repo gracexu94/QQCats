@@ -23,6 +23,4 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USceneComponent* CucumberRootComponent;
 	UMaterial* CucumberMaterial;
-	
-	void Drop();
 };
