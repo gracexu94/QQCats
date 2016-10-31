@@ -38,16 +38,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	FVector GunOffset;
 
+	/** Vector defining how far a cucumber can be spawned  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
+	FVector CucumberRange;
+
+	/** float defining how far "out" from a surface a cucumber should spawn  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	float CucumberNormalOffset;
+
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class AActor> ProjectileClass;
 
 	/** Sound to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	//class USoundBase* FireSound;
 
 	/** AnimMontage to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	//class UAnimMontage* FireAnimation;
 
 protected:
