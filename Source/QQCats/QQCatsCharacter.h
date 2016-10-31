@@ -1,5 +1,6 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
+#include "Cat.h"
 #include "GameFramework/Character.h"
 #include "QQCatsCharacter.generated.h"
 
@@ -57,6 +58,8 @@ public:
 	/** AnimMontage to play each time we fire */
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	//class UAnimMontage* FireAnimation;
+
+
 
 protected:
 

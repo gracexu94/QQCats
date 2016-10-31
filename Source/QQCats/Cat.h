@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Cucumber.h"
 #include "GameFramework/Actor.h"
 #include "Cat.generated.h"
 
@@ -20,6 +21,13 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	void CheckSurroundings();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USphereComponent* CatRootComponent;
 	
+	UMaterial* CatMaterial;
 	
+private:
+	TArray<class AActor*> cukes; 
 };
