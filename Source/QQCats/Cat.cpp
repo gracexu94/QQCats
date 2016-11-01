@@ -49,14 +49,17 @@ void ACat::CheckSurroundings() {
 	for (AActor* cuke : cukes) {
 		FVector CukePos = cuke->GetActorLocation();
 
-		UE_LOG(LogTemp, Warning, TEXT("Cat Position: %s"), *CatPos.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("Cuke Position: %s"), *CukePos.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("%f"), FVector::Dist(CatPos, CukePos));
-
-		if (FVector::Dist(CatPos, CukePos) < 400.0) {
-			UE_LOG(LogTemp, Warning, TEXT("he jump"));
-
-			CatRootComponent->AddForce(FVector(0.0f, 0.0f, 500000.0f));
+		//UE_LOG(LogTemp, Warning, TEXT("Cat Position: %s"), *CatPos.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Cuke Position: %s"), *CukePos.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), FVector::Dist(CatPos, CukePos));
+		float distance = FVector::Dist(CatPos, CukePos);
+		if (distance < threshold) {
+			FVector diff = CatPos - CukePos;
+			//UE_LOG(LogTemp, Warning, TEXT("he jump"));
+			
+			float xforce = diff.X * 100.0f;
+			float yforce = diff.Y * 100.0f;
+			CatRootComponent->AddForce(FVector(xforce, yforce, 150000.0f));
 		}
 	}
 

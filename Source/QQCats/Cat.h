@@ -30,4 +30,5 @@ public:
 	
 private:
 	TArray<class AActor*> cukes; 
+	float threshold = 400.0;
 };
