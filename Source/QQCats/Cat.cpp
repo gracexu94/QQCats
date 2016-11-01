@@ -11,6 +11,8 @@ ACat::ACat()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CatRootComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
+	CatRootComponent->SetCollisionProfileName(TEXT("OverlapAll"));
+	CatRootComponent->SetNotifyRigidBodyCollision(true);
 
 	RootComponent = CatRootComponent;
 
