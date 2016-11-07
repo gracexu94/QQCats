@@ -43,6 +43,10 @@ void AQQCatsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	// Find all of the cats
+	cats = FindCats();
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -132,6 +136,78 @@ void AQQCatsCharacter::DropCucumber() {
 		UE_LOG(LogTemp, Warning, TEXT("Offset is %s"), *SpawnRotation.RotateVector(GunOffset).ToString()); */
 
 		// spawn the projectile at the muzzle
-		World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+		AActor* c = World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+		cucumbers.Add(c);
 	} 
+}
+
+TArray<AActor*> AQQCatsCharacter::FindCats() {
+	TArray<class AActor*> result;
+	TSubclassOf<ACucumber> ClassToFind = ACat::StaticClass();
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, result);
+	return result;
+}
+
+TArray<AActor*> AQQCatsCharacter::FindCucumbers() {
+	TArray<class AActor*> result;
+	TSubclassOf<ACucumber> ClassToFind = ACucumber::StaticClass();
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, result);
+	return result;
+}
+
+ACucumber* AQQCatsCharacter::isCatSeesCucumber() {
+	UWorld* const World = GetWorld();
+
+	// Iterate through all of the cucumbers
+	for (AActor* cucumber : cucumbers) {
+		// Iterate through all ot the cats
+		for (AActor* cat : cats) {
+			// Raycast from the cucumber to the cat
+			const FVector rayStart = cucumber->GetActorLocation();
+			const FVector rayEnd = cat->GetActorLocation();
+
+			// If distance between the cucumber and cat is too far anyway,
+			// there is no use in raycasting
+			// Continue.
+			if (FVector::Dist(rayStart, rayEnd) < visDistance) {
+				continue;
+			}
+
+			// Check if cucumber is in sight of the cat
+			FVector u = rayEnd - rayStart; // Direction of cucumber to cat
+			u.Normalize(); // Normalize direction of cat
+
+			// Basically calculate lambert value to see if in sight
+			float inSight = FVector::DotProduct(u, cat->GetActorForwardVector());
+			if (inSight < 0.0) {
+				// Out of sight
+				continue;
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("cucumber in front of cat"));
+
+			// Check if obstructed by anything
+			FHitResult firstHit;
+			if (World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
+				// Hit Something
+				AActor* object = firstHit.GetActor();
+
+				// Check if the object is the cat
+				if (cat == object) {
+					// Jump
+
+					UE_LOG(LogTemp, Warning, TEXT("Call the car to jump"));
+
+				}
+				
+			}
+		}
+	}
+	return NULL;
+}
+
+
+// Called every frame
+void AQQCatsCharacter::Tick(float DeltaTime) {
+	ACucumber* test = isCatSeesCucumber();
 }

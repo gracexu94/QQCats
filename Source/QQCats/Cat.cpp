@@ -23,11 +23,10 @@ void ACat::BeginPlay()
 {
 	Super::BeginPlay();
 	CatRootComponent->InitSphereRadius(25.0f);
+	CatRootComponent->SetNotifyRigidBodyCollision(true);
 	CatRootComponent->SetCollisionProfileName(TEXT("Actor"));
 	CatRootComponent->SetEnableGravity(true);
 	CatRootComponent->SetSimulatePhysics(true);
-
-
 }
 
 // Called every frame
@@ -39,11 +38,12 @@ void ACat::Tick( float DeltaTime )
 	// TODO: only do this when new cukes are spawned
 	TSubclassOf<ACucumber> ClassToFind = ACucumber::StaticClass();
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, cukes);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), cukes.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), cukes.Num());
 
 	CheckSurroundings();
 }
 
+// The cat looks for cucumbers
 void ACat::CheckSurroundings() {
 	// get cat position
 	FVector CatPos = GetActorLocation();
@@ -66,3 +66,4 @@ void ACat::CheckSurroundings() {
 	}
 
 }
+

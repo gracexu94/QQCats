@@ -19,8 +19,6 @@ ACucumber::ACucumber()
 	CucumberBoxComponent->SetSimulatePhysics(false); 
 	CucumberBoxComponent->SetEnableGravity(false); 
 	CucumberBoxComponent->SetNotifyRigidBodyCollision(false);*/
-
-	UE_LOG(LogTemp, Warning, TEXT("MADE DA CUKE"));
 }
 
 // Called when the game starts or when spawned

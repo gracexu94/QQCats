@@ -1,6 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "Cat.h"
+#include "Cucumber.h"
 #include "GameFramework/Character.h"
 #include "QQCatsCharacter.generated.h"
 
@@ -81,7 +82,26 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+
+	// Called every frame
+	virtual void Tick(float DeltaSeconds) override;
+
+	// Raycasts cucumber into scene
 	void DropCucumber();
+
+	// Find all cats and cucumbers in the scene
+	TArray<AActor*> FindCats();
+	TArray<AActor*> FindCucumbers();
+
+	// Checks if cat can see cucumber
+	ACucumber* isCatSeesCucumber();
+
+	// Cats and cucumbers
+	TArray<AActor*> cats;
+	TArray<AActor*> cucumbers;
+
+	// Visible Distance 
+	float visDistance = 400.0;
 	
 protected:
 	// APawn interface
