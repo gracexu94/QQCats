@@ -37,6 +37,8 @@ AQQCatsCharacter::AQQCatsCharacter()
 
 	// Note: The ProjectileClass is set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	CucumberCount = 0;
+	CucumberLimit = 15;
 }
 
 void AQQCatsCharacter::BeginPlay()
@@ -102,36 +104,39 @@ void AQQCatsCharacter::LookUpAtRate(float Rate)
 }
 
 void AQQCatsCharacter::DropCucumber() {
-	// try and fire a projectile
-	UWorld* const World = GetWorld();
-	if (ProjectileClass != NULL && World != NULL)
-	{
-		/* Raycast into the world */
-		// compute ray start/end position
-		const FRotator SpawnRotation = GetControlRotation();
-		const FVector rayStart = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
-		const FVector rayEnd = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(CucumberRange);
-		
-		/*
-		UE_LOG(LogTemp, Warning, TEXT("Raystart is %s"), *rayStart.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("RayEnd is %s"), *rayEnd.ToString());
-		*/
+	if (CucumberCount < CucumberLimit) {
+		// try and fire a projectile
+		UWorld* const World = GetWorld();
+		if (ProjectileClass != NULL && World != NULL)
+		{
+			/* Raycast into the world */
+			// compute ray start/end position
+			const FRotator SpawnRotation = GetControlRotation();
+			const FVector rayStart = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+			const FVector rayEnd = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(CucumberRange);
 
-		FHitResult firstHit;
-		if (!World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
-			//UE_LOG(LogTemp, Warning, TEXT("no hit!"));
-			return;
+			/*
+			UE_LOG(LogTemp, Warning, TEXT("Raystart is %s"), *rayStart.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("RayEnd is %s"), *rayEnd.ToString());
+			*/
+
+			FHitResult firstHit;
+			if (!World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
+				//UE_LOG(LogTemp, Warning, TEXT("no hit!"));
+				return;
+			}
+
+			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+			const FVector SpawnLocation = rayStart + (rayEnd - rayStart) * firstHit.Time + firstHit.Normal * CucumberNormalOffset;
+			/*
+			UE_LOG(LogTemp, Warning, TEXT("SpawnLocation is %s"), *SpawnLocation.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("t to collision is %f"), firstHit.Time);
+			UE_LOG(LogTemp, Warning, TEXT("Character location is %s"), *GetActorLocation().ToString());
+			UE_LOG(LogTemp, Warning, TEXT("Offset is %s"), *SpawnRotation.RotateVector(GunOffset).ToString()); */
+
+			// spawn the projectile at the muzzle
+			World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+			CucumberCount++;
 		}
-
-		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-		const FVector SpawnLocation = rayStart + (rayEnd - rayStart) * firstHit.Time + firstHit.Normal * CucumberNormalOffset;
-		/*
-		UE_LOG(LogTemp, Warning, TEXT("SpawnLocation is %s"), *SpawnLocation.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("t to collision is %f"), firstHit.Time);
-		UE_LOG(LogTemp, Warning, TEXT("Character location is %s"), *GetActorLocation().ToString());
-		UE_LOG(LogTemp, Warning, TEXT("Offset is %s"), *SpawnRotation.RotateVector(GunOffset).ToString()); */
-
-		// spawn the projectile at the muzzle
-		World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
 	} 
 }

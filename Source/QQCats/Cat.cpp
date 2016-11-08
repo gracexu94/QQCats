@@ -39,7 +39,7 @@ void ACat::Tick( float DeltaTime )
 	// TODO: only do this when new cukes are spawned
 	TSubclassOf<ACucumber> ClassToFind = ACucumber::StaticClass();
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, cukes);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), cukes.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), cukes.Num());
 
 	CheckSurroundings();
 }
