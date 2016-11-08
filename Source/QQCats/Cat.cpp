@@ -47,13 +47,27 @@ void ACat::Tick( float DeltaTime )
 void ACat::CheckSurroundings() {
 	// get cat position
 	FVector CatPos = GetActorLocation();
+	//CatPos.Z += 1.0f;
+
+	UWorld* const World = GetWorld();
 
 	for (AActor* cuke : cukes) {
 		FVector CukePos = cuke->GetActorLocation();
+		// raycast towards every cucumber to see if it's "visible"
+		FHitResult firstHit;
+		if (World->LineTraceSingleByChannel(firstHit, CatPos, CukePos, ECC_Visibility)) {
+			UE_LOG(LogTemp, Warning, TEXT("first hit name is %s"), *firstHit.GetActor()->GetName());
+			if (cuke->GetName().Equals(firstHit.GetActor()->GetName())) {
+				UE_LOG(LogTemp, Warning, TEXT("cucumber unobstructed"));
+			}
+
+		}
+
 
 		//UE_LOG(LogTemp, Warning, TEXT("Cat Position: %s"), *CatPos.ToString());
 		//UE_LOG(LogTemp, Warning, TEXT("Cuke Position: %s"), *CukePos.ToString());
 		//UE_LOG(LogTemp, Warning, TEXT("%f"), FVector::Dist(CatPos, CukePos));
+		/*
 		float distance = FVector::Dist(CatPos, CukePos);
 		if (distance < threshold) {
 			FVector diff = CatPos - CukePos;
@@ -62,7 +76,7 @@ void ACat::CheckSurroundings() {
 			float xforce = diff.X * 100.0f;
 			float yforce = diff.Y * 100.0f;
 			CatRootComponent->AddForce(FVector(xforce, yforce, 150000.0f));
-		}
+		} */
 	}
 
 }
