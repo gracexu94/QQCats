@@ -51,12 +51,13 @@ void ACat::SelfRight() {
 
 	float angleBetween = acosf(FVector::DotProduct(characterUp, worldUp));
 	if (angleBetween > this->catMaxTipAngle) {
+		angleBetween *= 57.29577951f; // radians to degrees...?
 		// rotate the cat so that it's angle to "up" is within catMaxTipAngle 
 		FVector rotationAxis = FVector::CrossProduct(characterUp, worldUp);
 		FQuat correctionRotation = FQuat(rotationAxis, this->catMaxTipAngle);
 
 		FRotator oldRotation = this->GetActorRotation();
-		FQuat correctedRotation = correctedRotation * oldRotation.Quaternion(); // unsure if my math is right?
+		FQuat correctedRotation = correctionRotation * oldRotation.Quaternion();
 
 		this->SetActorRotation(correctedRotation);
 	}
@@ -98,13 +99,14 @@ void ACat::CheckSurroundings() {
 
 					FVector catForward = this->GetActorForwardVector();
 
-					float angleBetween = acosf(FVector::DotProduct(catForward, toCucumberDirection));
+					FVector rotationAxis = FVector::CrossProduct(catForward, toCucumberDirection);
+
+					float angleBetween = acosf(FVector::DotProduct(catForward, toCucumberDirection)) * 57.29577951f; // radians to degrees
 
 					FRotator oldRotation = this->GetActorRotation();
-					FQuat correctionRotation = FQuat(FVector::UpVector, angleBetween);
-					FQuat correctedRotation = correctedRotation * oldRotation.Quaternion(); // unsure if my math is right?
+					oldRotation.Yaw += angleBetween * rotationAxis.Z;
 
-					this->SetActorRotation(correctedRotation);
+					this->SetActorRotation(oldRotation);
 
 				}
 			}
