@@ -59,13 +59,18 @@ void ACat::SelfRight() {
 
 	float angleBetween = acosf(FVector::DotProduct(characterUp, worldUp));
 	if (angleBetween > this->catMaxTipAngle) {
-		angleBetween *= 57.29577951f; // radians to degrees...?
 		// rotate the cat so that it's angle to "up" is within catMaxTipAngle 
-		FVector rotationAxis = FVector::CrossProduct(characterUp, worldUp);
-		FQuat correctionRotation = FQuat(rotationAxis, this->catMaxTipAngle);
+		//FVector rotationAxis = FVector::CrossProduct(characterUp, worldUp);
+		//FQuat correctionRotation = FQuat(rotationAxis, this->catMaxTipAngle);
 
 		FRotator oldRotation = this->GetActorRotation();
-		FQuat correctedRotation = correctionRotation * oldRotation.Quaternion();
+
+		FRotator correctedRotation;
+		correctedRotation.Yaw = oldRotation.Yaw;
+		correctedRotation.Pitch = 0.0f;
+		correctedRotation.Roll = 0.0f;
+
+		//FQuat correctedRotation = correctionRotation * oldRotation.Quaternion();
 
 		this->SetActorRotation(correctedRotation);
 	}
@@ -140,7 +145,7 @@ void ACat::CheckAirborne() {
 	FVector CatPos = GetActorLocation();
 
 	// get position below the cat's feet
-	FVector FeetPos = CatPos + -1.0 * GetActorUpVector();
+	FVector FeetPos = CatPos - catHeight * GetActorUpVector();
 
 	UWorld* const World = GetWorld();
 

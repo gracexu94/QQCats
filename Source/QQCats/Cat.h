@@ -31,6 +31,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USphereComponent* CatRootComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		float catHeight;
+
 	UMaterial* CatMaterial;
 
 	bool isLanded;
