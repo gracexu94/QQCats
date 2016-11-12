@@ -78,7 +78,10 @@ void ACat::SelfRight() {
 
 void ACat::CheckSurroundings() {
 	// get cat position
-	FVector CatPos = GetActorLocation();
+
+	FVector CatPos = this->GetActorLocation();
+	FVector CatEyePos = CatPos + this->GetActorRotation().RotateVector(cucumberTargetOffset);
+
 	//CatPos.Z += 1.0f;
 
 	UWorld* const World = GetWorld();
@@ -87,7 +90,7 @@ void ACat::CheckSurroundings() {
 		FVector CukePos = cuke->GetActorLocation();
 		// raycast towards every cucumber to see if it's "visible"
 		FHitResult firstHit;
-		if (World->LineTraceSingleByChannel(firstHit, CatPos, CukePos, ECC_Visibility)) {
+		if (World->LineTraceSingleByChannel(firstHit, CatEyePos, CukePos, ECC_Visibility)) {
 			//UE_LOG(LogTemp, Warning, TEXT("first hit name is %s"), *firstHit.GetActor()->GetName());
 			if (cuke->GetName().Equals(firstHit.GetActor()->GetName())) {
 				//UE_LOG(LogTemp, Warning, TEXT("cucumber unobstructed"));
@@ -104,16 +107,15 @@ void ACat::CheckSurroundings() {
 					//float yforce = diff.Y * 1000.0f;
 					//CatRootComponent->AddForce(FVector(xforce, yforce, 15000000.0f));
 					
-					float xdir = diff.X * 100.0f;
-					float ydir = diff.X * 100.0f;
-					float zdir = 100000;
+					float xdir = diff.X * horizontalImpulseScale;
+					float ydir = diff.Y * horizontalImpulseScale;
+					float zdir = verticalImpulse;
 					FVector dir = FVector(xdir, ydir, zdir);
-					// dir.Normalize();
 
 					CatRootComponent->AddImpulse(dir);
-					UE_LOG(LogTemp, Warning, TEXT("added impulse"));
-
 					isLanded = false;
+
+					UE_LOG(LogTemp, Warning, TEXT("added impulse"));
 
 					// rotate cat along UP axis to look at cucumber
 					FVector toCucumberDirection = CukePos - CatPos;
@@ -127,7 +129,10 @@ void ACat::CheckSurroundings() {
 					float angleBetween = acosf(FVector::DotProduct(catForward, toCucumberDirection)) * 57.29577951f; // radians to degrees
 
 					FRotator oldRotation = this->GetActorRotation();
-					oldRotation.Yaw += angleBetween * rotationAxis.Z;
+					if (rotationAxis.Z > 0.0f)
+						oldRotation.Yaw += angleBetween;
+					else
+						oldRotation.Yaw -= angleBetween;
 
 					this->SetActorRotation(oldRotation);
 
@@ -142,21 +147,24 @@ void ACat::CheckSurroundings() {
 // Raycasts in the cat down position to see if the cat has landed
 void ACat::CheckAirborne() {
 	// get cat position
-	FVector CatPos = GetActorLocation();
+	FVector FeetPos = GetActorLocation();
 
 	// get position below the cat's feet
-	FVector FeetPos = CatPos - catHeight * GetActorUpVector();
+	FVector CatPos = FeetPos + checkGroundDistance * GetActorUpVector();
 
 	UWorld* const World = GetWorld();
 
 	FHitResult firstHit;
 	if (World->LineTraceSingleByChannel(firstHit, CatPos, FeetPos, ECC_Visibility)) {
 		UE_LOG(LogTemp, Warning, TEXT("first hit name is %s"), *firstHit.GetActor()->GetName());
-		// Hit Something
+		// Hit Something that isn't this
 		// TODO: Delete else and negate this condition, but for now just check
-		isLanded = true;
+		if (firstHit.GetActor()->GetName() != this->GetName()) {
+			isLanded = true;
 
-		UE_LOG(LogTemp, Warning, TEXT("landed"));
+			UE_LOG(LogTemp, Warning, TEXT("landed"));
+		}
+		else isLanded = false;
 	}
 	else {
 		isLanded = false;

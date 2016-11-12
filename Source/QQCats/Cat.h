@@ -32,14 +32,24 @@ public:
 		USphereComponent* CatRootComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		float catHeight;
+		float checkGroundDistance;
 
 	UMaterial* CatMaterial;
 
 	bool isLanded;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		FVector cucumberTargetOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		float threshold;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		float horizontalImpulseScale;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		float verticalImpulse;
 
 private:
 	TArray<class AActor*> cukes;
-	float threshold = 400.0;
 };
