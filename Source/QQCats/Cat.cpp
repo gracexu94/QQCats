@@ -40,7 +40,6 @@ void ACat::Tick( float DeltaTime )
 	// TODO: only do this when new cukes are spawned
 	TSubclassOf<ACucumber> ClassToFind = ACucumber::StaticClass();
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, cukes);
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), cukes.Num());
 
 	SelfRight();
 
@@ -101,11 +100,6 @@ void ACat::CheckSurroundings() {
 				float distance = FVector::Dist(CatPos, CukePos);
 				if (distance < threshold) {
 					FVector diff = CatPos - CukePos;
-					// UE_LOG(LogTemp, Warning, TEXT("he jump"));
-
-					//float xforce = diff.X * 1000.0f;
-					//float yforce = diff.Y * 1000.0f;
-					//CatRootComponent->AddForce(FVector(xforce, yforce, 15000000.0f));
 					
 					float xdir = diff.X * horizontalImpulseScale;
 					float ydir = diff.Y * horizontalImpulseScale;

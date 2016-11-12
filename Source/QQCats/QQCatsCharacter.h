@@ -64,6 +64,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int CucumberLimit;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	int Score;
+
 protected:
 
 	/** Handles moving forward/backward */
