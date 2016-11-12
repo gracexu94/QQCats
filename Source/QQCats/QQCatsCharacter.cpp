@@ -127,7 +127,16 @@ void AQQCatsCharacter::DropCucumber() {
 		}
 
 		// UE_LOG(LogTemp, Warning, TEXT("Hit Class is %s"), *firstHit.GetActor()->GetName())
-		if (CucumberCount < CucumberLimit) {
+		
+		if (firstHit.GetActor()->IsA(ACucumber::StaticClass())) {
+			//UE_LOG(LogTemp, Warning, TEXT("First hit is a cucumber"));
+				
+			// Pick up Cucumber
+			firstHit.GetActor()->Destroy();
+			CucumberCount--;
+			Score--;
+		}
+		else if (CucumberCount < CucumberLimit) {
 			// Drop Cucumber
 
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
@@ -141,14 +150,6 @@ void AQQCatsCharacter::DropCucumber() {
 			// spawn the projectile at the muzzle
 			World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
 			CucumberCount++;
-			Score--;
-		}
-		else if (firstHit.GetActor()->IsA(ACucumber::StaticClass())) {
-			//UE_LOG(LogTemp, Warning, TEXT("First hit is a cucumber"));
-				
-			// Pick up Cucumber
-			firstHit.GetActor()->Destroy();
-			CucumberCount--;
 			Score--;
 		}
 	}
