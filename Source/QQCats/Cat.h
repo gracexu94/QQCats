@@ -21,10 +21,14 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	void SelfRight();
 	void CheckSurroundings();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		float catMaxTipAngle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USphereComponent* CatRootComponent;
+		USphereComponent* CatRootComponent;
 	
 	UMaterial* CatMaterial;
 	
