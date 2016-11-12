@@ -21,12 +21,16 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	void CheckSurroundings();
+	void CheckSurroundings(); // Checks for cucumbers
+	void CheckAirborne(); // Raycasts down to see if the cat has landed
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* CatRootComponent;
 	
 	UMaterial* CatMaterial;
+
+	bool isLanded;
+
 	
 private:
 	TArray<class AActor*> cukes; 
