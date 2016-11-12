@@ -112,8 +112,8 @@ void AQQCatsCharacter::DropCucumber() {
 			/* Raycast into the world */
 			// compute ray start/end position
 			const FRotator SpawnRotation = GetControlRotation();
-			const FVector rayStart = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
-			const FVector rayEnd = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(CucumberRange);
+			const FVector rayStart = ((FirstPersonCameraComponent != nullptr) ? FirstPersonCameraComponent->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+			const FVector rayEnd = ((FirstPersonCameraComponent != nullptr) ? FirstPersonCameraComponent->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(CucumberRange);
 
 			/*
 			UE_LOG(LogTemp, Warning, TEXT("Raystart is %s"), *rayStart.ToString());
