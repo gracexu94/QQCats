@@ -126,17 +126,30 @@ void AQQCatsCharacter::DropCucumber() {
 				return;
 			}
 
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = rayStart + (rayEnd - rayStart) * firstHit.Time + firstHit.Normal * CucumberNormalOffset;
-			/*
-			UE_LOG(LogTemp, Warning, TEXT("SpawnLocation is %s"), *SpawnLocation.ToString());
-			UE_LOG(LogTemp, Warning, TEXT("t to collision is %f"), firstHit.Time);
-			UE_LOG(LogTemp, Warning, TEXT("Character location is %s"), *GetActorLocation().ToString());
-			UE_LOG(LogTemp, Warning, TEXT("Offset is %s"), *SpawnRotation.RotateVector(GunOffset).ToString()); */
+			// UE_LOG(LogTemp, Warning, TEXT("Hit Class is %s"), *firstHit.GetActor()->GetName())
+			
+			if (firstHit.GetActor()->IsA(ACucumber::StaticClass())) {
+				//UE_LOG(LogTemp, Warning, TEXT("First hit is a cucumber"));
+				
+				// Pick up Cucumber
+				firstHit.GetActor()->Destroy();
+				CucumberCount--;
+			}
+			else {
+				// Drop Cucumber
 
-			// spawn the projectile at the muzzle
-			World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
-			CucumberCount++;
+				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+				const FVector SpawnLocation = rayStart + (rayEnd - rayStart) * firstHit.Time + firstHit.Normal * CucumberNormalOffset;
+				/*
+				UE_LOG(LogTemp, Warning, TEXT("SpawnLocation is %s"), *SpawnLocation.ToString());
+				UE_LOG(LogTemp, Warning, TEXT("t to collision is %f"), firstHit.Time);
+				UE_LOG(LogTemp, Warning, TEXT("Character location is %s"), *GetActorLocation().ToString());
+				UE_LOG(LogTemp, Warning, TEXT("Offset is %s"), *SpawnRotation.RotateVector(GunOffset).ToString()); */
+
+				// spawn the projectile at the muzzle
+				World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+				CucumberCount++;
+			}
 		}
 	} 
 }

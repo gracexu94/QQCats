@@ -40,7 +40,6 @@ void ACat::Tick( float DeltaTime )
 	// TODO: only do this when new cukes are spawned
 	TSubclassOf<ACucumber> ClassToFind = ACucumber::StaticClass();
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, cukes);
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), cukes.Num());
 
 	SelfRight();
 
@@ -98,11 +97,6 @@ void ACat::CheckSurroundings() {
 				float distance = FVector::Dist(CatPos, CukePos);
 				if (distance < threshold) {
 					FVector diff = CatPos - CukePos;
-					// UE_LOG(LogTemp, Warning, TEXT("he jump"));
-
-					//float xforce = diff.X * 1000.0f;
-					//float yforce = diff.Y * 1000.0f;
-					//CatRootComponent->AddForce(FVector(xforce, yforce, 15000000.0f));
 					
 					float xdir = diff.X * 100.0f;
 					float ydir = diff.X * 100.0f;
@@ -111,7 +105,6 @@ void ACat::CheckSurroundings() {
 					// dir.Normalize();
 
 					CatRootComponent->AddImpulse(dir);
-					UE_LOG(LogTemp, Warning, TEXT("added impulse"));
 
 					isLanded = false;
 
@@ -151,12 +144,7 @@ void ACat::CheckAirborne() {
 
 	FHitResult firstHit;
 	if (World->LineTraceSingleByChannel(firstHit, CatPos, FeetPos, ECC_Visibility)) {
-		UE_LOG(LogTemp, Warning, TEXT("first hit name is %s"), *firstHit.GetActor()->GetName());
-		// Hit Something
-		// TODO: Delete else and negate this condition, but for now just check
 		isLanded = true;
-
-		UE_LOG(LogTemp, Warning, TEXT("landed"));
 	}
 	else {
 		isLanded = false;

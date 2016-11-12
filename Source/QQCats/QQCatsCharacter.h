@@ -85,6 +85,8 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	void DropCucumber();
+	// void PickUpCucumber();
+	void DropOrPickUpCucumber();
 	
 protected:
 	// APawn interface

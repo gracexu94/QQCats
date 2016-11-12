@@ -37,8 +37,6 @@ public:
 	UMaterial* CatMaterial;
 
 	bool isLanded;
-
-
 private:
 	TArray<class AActor*> cukes;
 	float threshold = 400.0;
