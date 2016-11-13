@@ -67,6 +67,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int Score;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	bool hoverOverCucumber;
+
+	// Called every frame
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 
 	/** Handles moving forward/backward */
@@ -87,12 +93,16 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	void DropCucumber();
+	void Clicked();
+	void SpawnCucumber(FHitResult firstHit, const FRotator SpawnRotation, const FVector rayStart, const FVector rayEnd);
+	void RaycastThroughScreen();
 	
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
+
+	bool clicked;
 
 public:
 	/** Returns Mesh1P subobject **/

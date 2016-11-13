@@ -13,6 +13,10 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 AQQCatsCharacter::AQQCatsCharacter()
 {
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+	clicked = false;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -40,6 +44,7 @@ AQQCatsCharacter::AQQCatsCharacter()
 	CucumberCount = 0;
 	CucumberLimit = 15;
 	Score = CucumberLimit;
+	clicked = false;
 }
 
 void AQQCatsCharacter::BeginPlay()
@@ -71,7 +76,7 @@ void AQQCatsCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAxis("LookUpRate", this, &AQQCatsCharacter::LookUpAtRate);
 
 
-	InputComponent->BindAction("DropCucumber", IE_Pressed, this, &AQQCatsCharacter::DropCucumber);
+	InputComponent->BindAction("Clicked", IE_Pressed, this, &AQQCatsCharacter::Clicked);
 }
 
 void AQQCatsCharacter::MoveForward(float Value)
@@ -104,7 +109,14 @@ void AQQCatsCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AQQCatsCharacter::DropCucumber() {
+// Called every frame
+// Called every frame
+void AQQCatsCharacter::Tick(float DeltaTime) {
+	// Raycast
+	RaycastThroughScreen();
+}
+
+void AQQCatsCharacter::RaycastThroughScreen() {
 	// try and fire a projectile
 	UWorld* const World = GetWorld();
 	if (ProjectileClass != NULL && World != NULL)
@@ -121,36 +133,51 @@ void AQQCatsCharacter::DropCucumber() {
 		*/
 
 		FHitResult firstHit;
-		if (!World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
-			//UE_LOG(LogTemp, Warning, TEXT("no hit!"));
-			return;
-		}
+		if (World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
+			// Hit
 
-		// UE_LOG(LogTemp, Warning, TEXT("Hit Class is %s"), *firstHit.GetActor()->GetName())
-		
-		if (firstHit.GetActor()->IsA(ACucumber::StaticClass())) {
-			//UE_LOG(LogTemp, Warning, TEXT("First hit is a cucumber"));
-				
-			// Pick up Cucumber
-			firstHit.GetActor()->Destroy();
-			CucumberCount--;
-			Score--;
+			if (clicked) {
+				SpawnCucumber(firstHit, SpawnRotation, rayStart, rayEnd);
+				clicked = false;
+			} else if (firstHit.GetActor()->IsA(ACucumber::StaticClass())) {
+				hoverOverCucumber = true;
+			}
+			else {
+				hoverOverCucumber = false;
+			}
 		}
-		else if (CucumberCount < CucumberLimit) {
-			// Drop Cucumber
+	}
 
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = rayStart + (rayEnd - rayStart) * firstHit.Time + firstHit.Normal * CucumberNormalOffset;
-			/*
-			UE_LOG(LogTemp, Warning, TEXT("SpawnLocation is %s"), *SpawnLocation.ToString());
-			UE_LOG(LogTemp, Warning, TEXT("t to collision is %f"), firstHit.Time);
-			UE_LOG(LogTemp, Warning, TEXT("Character location is %s"), *GetActorLocation().ToString());
-			UE_LOG(LogTemp, Warning, TEXT("Offset is %s"), *SpawnRotation.RotateVector(GunOffset).ToString()); */
+}
 
-			// spawn the projectile at the muzzle
-			World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
-			CucumberCount++;
-			Score--;
-		}
+void AQQCatsCharacter::Clicked() {
+	clicked = true;
+}
+
+void AQQCatsCharacter::SpawnCucumber(FHitResult firstHit, const FRotator SpawnRotation, const FVector rayStart, const FVector rayEnd) {
+	UWorld* const World = GetWorld();
+	// Drop Cucumber
+
+	if (firstHit.GetActor()->IsA(ACucumber::StaticClass())) {
+		//UE_LOG(LogTemp, Warning, TEXT("First hit is a cucumber"));
+
+		// Pick up Cucumber
+		firstHit.GetActor()->Destroy();
+		CucumberCount--;
+		Score--;
+	}
+	else if (CucumberCount < CucumberLimit) {
+		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+		const FVector SpawnLocation = rayStart + (rayEnd - rayStart) * firstHit.Time + firstHit.Normal * CucumberNormalOffset;
+		/*
+		UE_LOG(LogTemp, Warning, TEXT("SpawnLocation is %s"), *SpawnLocation.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("t to collision is %f"), firstHit.Time);
+		UE_LOG(LogTemp, Warning, TEXT("Character location is %s"), *GetActorLocation().ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Offset is %s"), *SpawnRotation.RotateVector(GunOffset).ToString()); */
+
+		// spawn the projectile at the muzzle
+		World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+		CucumberCount++;
+		Score--;
 	}
 }
