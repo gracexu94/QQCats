@@ -21,6 +21,8 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	UBoxComponent* AsteroidBoxComponent;
+
 	/** Replacement blueprint class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 		TSubclassOf<class AActor> ReplacementClass;
