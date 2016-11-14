@@ -7,6 +7,13 @@
 // Sets default values
 ACat::ACat()
 {
+	timers.resize(6);
+
+	timers[catTimers::AIR] = -1.0f;
+	timers[catTimers::IDLE] = -1.0f;
+	timers[catTimers::WALK] = -1.0f;
+	timers[catTimers::TURN] = -1.0f;
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -36,33 +43,91 @@ void ACat::BeginPlay()
 		SkeletalMeshComponent = Components[i];
 		break;
 	}
+
+	resetBoredom();
+}
+
+void ACat::updateTimers(float DeltaTime) {
+	timers[catTimers::AIR] -= DeltaTime;
+	timers[catTimers::IDLE] -= DeltaTime;
+	timers[catTimers::WALK] -= DeltaTime;
+	timers[catTimers::TURN] -= DeltaTime;
+}
+
+void ACat::resetBoredom() {
+	timers[catTimers::IDLE] = this->durationIdleMax; // TODO randomize?
+}
+
+void ACat::updateCatBehaviors(float DeltaTime) {
+	// update position/orientation based on if there's still a walk/turn behavior going
+	if (timers[catTimers::WALK] > 0.0f) {
+		step(DeltaTime);
+	}
+	else if (timers[catTimers::TURN] > 0.0f) {
+		turn(DeltaTime);
+	}
+
+	// launch a new behavior if the cat's idle
+	else if (timers[catTimers::IDLE] < 0.0f) {
+		// decide on a new behavior for the cat by setting the appropriate timer.
+		UE_LOG(LogTemp, Warning, TEXT("cat got bored"));
+
+		float random = (float )rand() / (float)RAND_MAX;
+		if (random < 0.5f) {
+			timers[catTimers::WALK] = this->walkMax;
+			PlayMontage(walkMontage);
+		}
+		if (0.5f <= random && random < 0.75f) {
+			timers[catTimers::TURN] = this->turnMax;
+			turnLeft = true;
+			PlayMontage(leftTurnMontage);
+		}
+		if (0.75f <= random) {
+			timers[catTimers::TURN] = this->turnMax;
+			turnLeft = false;
+			PlayMontage(rightTurnMontage);
+		}
+	}
+}
+
+void ACat::step(float DeltaTime) {
+	resetBoredom(); // don't allow return to idle
+
+	// check if getting ready to stop
+	if (timers[catTimers::WALK] < DeltaTime) {
+		PlayMontage(tailWagMontage);
+	}
+	else {
+		// walk forward aimlessly
+		FVector forward = GetActorForwardVector();
+		SetActorLocation(forward + GetActorLocation());
+	}
+}
+
+void ACat::turn(float DeltaTime) {
+	resetBoredom();
+
+	// check if getting ready to stop
+	if (timers[catTimers::TURN] < DeltaTime) {
+		PlayMontage(tailWagMontage);
+	}
+	else {
+		// turn aimlessly
+		FRotator oldRotation = this->GetActorRotation();
+
+		FRotator correctedRotation;
+		correctedRotation.Yaw = turnLeft ? oldRotation.Yaw - 0.5f : oldRotation.Yaw + 0.5f;
+		this->SetActorRotation(correctedRotation); // this works fine with friction, gravity
+	}
 }
 
 // Called every frame
 void ACat::Tick( float DeltaTime )
 {
-
 	Super::Tick( DeltaTime );
 
-	// TODO: cat wandering behavior
-	// - add a set of timers that get updated on every tick as needed
-	// - need to check how long cat's been in the air -> glitch fixer
-	// - need to check how long it's been since there was a stimulus
-	// - need to check how long cat's been walking
-	// - need to check how long cat's been turning
-	// - need a timer for current montage duration
-	//flyingWiggleMontage->GetPlayLength();
-	FRotator oldRotation = this->GetActorRotation();
-
-	FRotator correctedRotation;
-	correctedRotation.Yaw = oldRotation.Yaw + 0.5f;
-	correctedRotation.Pitch = 0.0f;
-	correctedRotation.Roll = 0.0f;
-	//this->SetActorRotation(correctedRotation); // this works fine with friction, gravity
-
-	FVector forward = GetActorForwardVector();
-	forward.Z = 0.0f;
-	//SetActorLocation(forward + GetActorLocation()); // this seems to work fine
+	updateTimers(DeltaTime);
+	updateCatBehaviors(DeltaTime);
 
 	// get cucumbers 
 	// TODO: only do this when new cukes are spawned
@@ -123,6 +188,8 @@ void ACat::CheckSurroundings() {
 				//UE_LOG(LogTemp, Warning, TEXT("Cuke Position: %s"), *CukePos.ToString());
 				//UE_LOG(LogTemp, Warning, TEXT("%f"), FVector::Dist(CatPos, CukePos));
 
+				// jump!
+
 				float distance = FVector::Dist(CatPos, CukePos);
 				if (distance < threshold) {
 					FVector diff = CatPos - CukePos;
@@ -153,12 +220,16 @@ void ACat::CheckSurroundings() {
 
 					this->SetActorRotation(oldRotation);
 
+					// set AIR timer so we can detect timeout
+					// immediately deplete behavior timers
+					resetBoredom();
+					timers[catTimers::AIR] = this->durationAirMax;
+					timers[catTimers::WALK] = -1.0f;
+					timers[catTimers::TURN] = -1.0f;
 				}
 			}
 		}
-		
 	}
-
 }
 
 // Raycasts in the cat down position to see if the cat has landed
@@ -178,15 +249,19 @@ void ACat::CheckAirborne() {
 		// TODO: Delete else and negate this condition, but for now just check
 		if (firstHit.GetActor()->GetName() != this->GetName()) {
 			isLanded = true;
+			resetBoredom();
 
 			UE_LOG(LogTemp, Warning, TEXT("landed"));
 			PlayMontage(tailWagMontage);
 		}
 	}
+	else if (timers[catTimers::AIR] < 0.0f) {
+		isLanded = true;
+		resetBoredom();
+	}
 	else {
 		isLanded = false;
 	}
-
 }
 
 void ACat::PlayMontage(UAnimMontage *montage) {
