@@ -19,6 +19,7 @@ ACarrier::ACarrier()
 	AsteroidBoxComponent->SetEnableGravity(true);
 	AsteroidBoxComponent->SetNotifyRigidBodyCollision(true);
 	OnActorHit.AddDynamic(this, &ACarrier::onHit);
+
 }
 
 // Called when the game starts or when spawned
@@ -49,10 +50,12 @@ void ACarrier::onHit(AActor* SelfActor, class AActor* OtherActor, FVector Normal
 		UWorld* const World = GetWorld();
 		if (World) {
 			UE_LOG(LogTemp, Warning, TEXT("YOU WIN!! YOU ARE SMART!"));
+
 			const FVector SpawnLocation = GetActorLocation();
 			const FRotator SpawnRotation = GetActorRotation();
 
 			World->SpawnActor<AActor>(ReplacementClass, SpawnLocation, SpawnRotation);
+			UE_LOG(LogTemp, Warning, TEXT("catInCarrier"));
 		}
 	}
 }
