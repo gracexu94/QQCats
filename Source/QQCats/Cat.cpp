@@ -96,6 +96,7 @@ void ACat::step(float DeltaTime) {
 	// check if getting ready to stop
 	if (timers[catTimers::WALK] < DeltaTime) {
 		PlayMontage(tailWagMontage);
+		timers[catTimers::IDLE] = 0.0f;
 	}
 	else {
 		// walk forward aimlessly
@@ -110,6 +111,7 @@ void ACat::turn(float DeltaTime) {
 	// check if getting ready to stop
 	if (timers[catTimers::TURN] < DeltaTime) {
 		PlayMontage(tailWagMontage);
+		timers[catTimers::IDLE] = 0.0f;
 	}
 	else {
 		// turn aimlessly
