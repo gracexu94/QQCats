@@ -29,5 +29,4 @@ public:
 	
 	UFUNCTION() void onHit(AActor* SelfActor, class AActor* OtherActor,
 		FVector NormalImpulse, const FHitResult& Hit);
-
 };
