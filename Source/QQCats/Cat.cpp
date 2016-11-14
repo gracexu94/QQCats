@@ -41,7 +41,28 @@ void ACat::BeginPlay()
 // Called every frame
 void ACat::Tick( float DeltaTime )
 {
+
 	Super::Tick( DeltaTime );
+
+	// TODO: cat wandering behavior
+	// - add a set of timers that get updated on every tick as needed
+	// - need to check how long cat's been in the air -> glitch fixer
+	// - need to check how long it's been since there was a stimulus
+	// - need to check how long cat's been walking
+	// - need to check how long cat's been turning
+	// - need a timer for current montage duration
+	//flyingWiggleMontage->GetPlayLength();
+	FRotator oldRotation = this->GetActorRotation();
+
+	FRotator correctedRotation;
+	correctedRotation.Yaw = oldRotation.Yaw + 0.5f;
+	correctedRotation.Pitch = 0.0f;
+	correctedRotation.Roll = 0.0f;
+	//this->SetActorRotation(correctedRotation); // this works fine with friction, gravity
+
+	FVector forward = GetActorForwardVector();
+	forward.Z = 0.0f;
+	//SetActorLocation(forward + GetActorLocation()); // this seems to work fine
 
 	// get cucumbers 
 	// TODO: only do this when new cukes are spawned
@@ -65,20 +86,20 @@ void ACat::SelfRight() {
 
 	float angleBetween = acosf(FVector::DotProduct(characterUp, worldUp));
 	if (angleBetween > this->catMaxTipAngle) {
-		// rotate the cat so that it's angle to "up" is within catMaxTipAngle 
-		//FVector rotationAxis = FVector::CrossProduct(characterUp, worldUp);
-		//FQuat correctionRotation = FQuat(rotationAxis, this->catMaxTipAngle);
-
+		
+		// rotate the cat so that it's angle to "up" is within catMaxTipAngle
+		FVector rotationAxis = FVector::CrossProduct(characterUp, worldUp);
+		rotationAxis.Normalize();
+		
 		FRotator oldRotation = this->GetActorRotation();
+		oldRotation.Pitch = 0.0f;
+		oldRotation.Roll = 0.0f;
 
-		FRotator correctedRotation;
-		correctedRotation.Yaw = oldRotation.Yaw;
-		correctedRotation.Pitch = 0.0f;
-		correctedRotation.Roll = 0.0f;
+		FQuat rotationQuaternion = oldRotation.Quaternion();
+		FQuat rotateToAngle = FQuat(rotationAxis, -this->catMaxTipAngle);
+		rotationQuaternion = rotateToAngle * rotationQuaternion;
 
-		//FQuat correctedRotation = correctionRotation * oldRotation.Quaternion();
-
-		this->SetActorRotation(correctedRotation);
+		this->SetActorRotation(rotationQuaternion);
 	}
 }
 
@@ -87,8 +108,6 @@ void ACat::CheckSurroundings() {
 
 	FVector CatPos = this->GetActorLocation();
 	FVector CatEyePos = CatPos + this->GetActorRotation().RotateVector(cucumberTargetOffset);
-
-	//CatPos.Z += 1.0f;
 
 	UWorld* const World = GetWorld();
 
@@ -123,13 +142,9 @@ void ACat::CheckSurroundings() {
 					FVector toCucumberDirection = CukePos - CatPos;
 					toCucumberDirection.Z = 0.0;
 					toCucumberDirection.Normalize();
-
 					FVector catForward = this->GetActorForwardVector();
-
 					FVector rotationAxis = FVector::CrossProduct(catForward, toCucumberDirection);
-
 					float angleBetween = acosf(FVector::DotProduct(catForward, toCucumberDirection)) * 57.29577951f; // radians to degrees
-
 					FRotator oldRotation = this->GetActorRotation();
 					if (rotationAxis.Z > 0.0f)
 						oldRotation.Yaw += angleBetween;
