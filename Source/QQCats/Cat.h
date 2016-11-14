@@ -4,6 +4,7 @@
 
 #include "Cucumber.h"
 #include "GameFramework/Actor.h"
+#include "Runtime/Engine/Classes/Animation/AnimMontage.h"
 #include "Cat.generated.h"
 
 UCLASS()
@@ -50,6 +51,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		float verticalImpulse;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+		UAnimMontage *tailWagMontage;
+
 private:
+
+	USkeletalMeshComponent* SkeletalMeshComponent;
+
+	void PlayMontage(UAnimMontage *montage);
+
 	TArray<class AActor*> cukes;
 };

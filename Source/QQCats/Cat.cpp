@@ -28,7 +28,14 @@ void ACat::BeginPlay()
 	CatRootComponent->SetEnableGravity(true);
 	CatRootComponent->SetSimulatePhysics(true);
 
-
+	// Get the SkeletalMesh so we can play animations
+	TArray<USkeletalMeshComponent*> Components;
+	this->GetComponents<USkeletalMeshComponent>(Components);
+	for (int32 i = 0; i<Components.Num(); i++)
+	{
+		SkeletalMeshComponent = Components[i];
+		break;
+	}
 }
 
 // Called every frame
@@ -157,6 +164,7 @@ void ACat::CheckAirborne() {
 			isLanded = true;
 
 			UE_LOG(LogTemp, Warning, TEXT("landed"));
+			PlayMontage(tailWagMontage);
 		}
 		else isLanded = false;
 	}
@@ -164,4 +172,18 @@ void ACat::CheckAirborne() {
 		isLanded = false;
 	}
 
+}
+
+void ACat::PlayMontage(UAnimMontage *montage) {
+	if (montage->IsValidLowLevel())
+	{
+		if (this->SkeletalMeshComponent)
+		{
+			UAnimInstance *AnimInst = this->SkeletalMeshComponent->GetAnimInstance();
+			if (AnimInst)
+			{
+				AnimInst->Montage_Play(montage);
+			}
+		}
+	}
 }
