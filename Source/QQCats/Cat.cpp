@@ -99,7 +99,7 @@ void ACat::step(float DeltaTime) {
 	}
 	else {
 		// walk forward aimlessly
-		FVector forward = GetActorForwardVector();
+		FVector forward = GetActorForwardVector() * walkStepSize * DeltaTime;
 		SetActorLocation(forward + GetActorLocation());
 	}
 }
@@ -116,7 +116,8 @@ void ACat::turn(float DeltaTime) {
 		FRotator oldRotation = this->GetActorRotation();
 
 		FRotator correctedRotation;
-		correctedRotation.Yaw = turnLeft ? oldRotation.Yaw - 0.5f : oldRotation.Yaw + 0.5f;
+		float turnStep = turnStepSize * DeltaTime;
+		correctedRotation.Yaw = turnLeft ? oldRotation.Yaw - turnStep : oldRotation.Yaw + turnStep;
 		this->SetActorRotation(correctedRotation); // this works fine with friction, gravity
 	}
 }

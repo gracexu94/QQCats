@@ -81,6 +81,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
 		float turnMax; // maximum time that a cat can be turning
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
+		float walkStepSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
+		float turnStepSize;
+
 private:
 
 	USkeletalMeshComponent* SkeletalMeshComponent;
