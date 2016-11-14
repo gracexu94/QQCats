@@ -48,7 +48,7 @@ public:
 	float CucumberNormalOffset;
 
 	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category=Projectile)
+	UPROPERTY(EditDefaultsOnly, Category= Gameplay)
 	TSubclassOf<class AActor> ProjectileClass;
 
 	/** Sound to play each time we fire */

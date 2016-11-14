@@ -149,7 +149,7 @@ void ACat::CheckAirborne() {
 	UWorld* const World = GetWorld();
 
 	FHitResult firstHit;
-	if (World->LineTraceSingleByChannel(firstHit, CatPos, FeetPos, ECC_Visibility)) {
+	if (World->LineTraceSingleByChannel(firstHit, CatPos, FeetPos, ECC_WorldStatic)) {
 		UE_LOG(LogTemp, Warning, TEXT("first hit name is %s"), *firstHit.GetActor()->GetName());
 		// Hit Something that isn't this
 		// TODO: Delete else and negate this condition, but for now just check
