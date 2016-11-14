@@ -16,7 +16,7 @@ ACarrier::ACarrier()
 	AsteroidBoxComponent->InitBoxExtent(FVector(80.0f, 100.0f, 70.0f));
 	AsteroidBoxComponent->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	AsteroidBoxComponent->SetSimulatePhysics(true);
-	AsteroidBoxComponent->SetEnableGravity(false);
+	AsteroidBoxComponent->SetEnableGravity(true);
 	AsteroidBoxComponent->SetNotifyRigidBodyCollision(true);
 	OnActorHit.AddDynamic(this, &ACarrier::onHit);
 }
