@@ -73,16 +73,23 @@ void ACat::updateCatBehaviors(float DeltaTime) {
 		UE_LOG(LogTemp, Warning, TEXT("cat got bored"));
 
 		float random = (float )rand() / (float)RAND_MAX;
-		if (random < 0.5f) {
+		if (random < 0.25f) {
+			// return to idle, for a randomized amount of time
+			timers[catTimers::IDLE] = this->durationIdleMax * random;
+			PlayMontage(tailWagMontage);
+		}
+		if (0.25f <= random && random < 0.6f) {
+			// walk
 			timers[catTimers::WALK] = this->walkMax;
 			PlayMontage(walkMontage);
 		}
-		if (0.5f <= random && random < 0.75f) {
+		// turn
+		if (0.6f <= random && random < 0.8f) {
 			timers[catTimers::TURN] = this->turnMax;
 			turnLeft = true;
 			PlayMontage(leftTurnMontage);
 		}
-		if (0.75f <= random) {
+		if (0.8f <= random) {
 			timers[catTimers::TURN] = this->turnMax;
 			turnLeft = false;
 			PlayMontage(rightTurnMontage);

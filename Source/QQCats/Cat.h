@@ -69,17 +69,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 		UAnimMontage *leftTurnMontage;
 
+	// maximum in-air time, for getting around ground detect bugs
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
-		float durationAirMax; // maximum in-air time, for getting around ground detect bugs
+		float durationAirMax;
 
+	// maximum time that a cat can be idle
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
-		float durationIdleMax; // maximum time that a cat can be idle
+		float durationIdleMax; 
 
+	// maximum time that a cat can be walking
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
-		float walkMax; // maximum time that a cat can be walking
+		float walkMax;
 
+	// maximum time that a cat can be turning
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
-		float turnMax; // maximum time that a cat can be turning
+		float turnMax; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
 		float walkStepSize;
