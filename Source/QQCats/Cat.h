@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 		UAnimMontage *tailWagMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+		UAnimMontage *flyingWiggleMontage;
+
 private:
 
 	USkeletalMeshComponent* SkeletalMeshComponent;

@@ -115,6 +115,7 @@ void ACat::CheckSurroundings() {
 
 					CatRootComponent->AddImpulse(dir);
 					isLanded = false;
+					PlayMontage(flyingWiggleMontage);
 
 					UE_LOG(LogTemp, Warning, TEXT("added impulse"));
 
@@ -166,7 +167,6 @@ void ACat::CheckAirborne() {
 			UE_LOG(LogTemp, Warning, TEXT("landed"));
 			PlayMontage(tailWagMontage);
 		}
-		else isLanded = false;
 	}
 	else {
 		isLanded = false;
