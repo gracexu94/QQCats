@@ -70,6 +70,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 		UAnimMontage *leftTurnMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+		UAnimMontage *petPetMontage;
+
 	// maximum in-air time, for getting around ground detect bugs
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
 		float durationAirMax;

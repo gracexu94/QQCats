@@ -102,7 +102,7 @@ void ACat::petPet() {
 	resetBoredom();
 	timers[catTimers::WALK] = -1.0f;
 	timers[catTimers::TURN] = -1.0f;
-	PlayMontage(tailWagMontage);
+	PlayMontage(petPetMontage);
 }
 
 void ACat::step(float DeltaTime) {
