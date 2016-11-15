@@ -55,7 +55,7 @@ void ACat::updateTimers(float DeltaTime) {
 }
 
 void ACat::resetBoredom() {
-	timers[catTimers::IDLE] = this->durationIdleMax; // TODO randomize?
+	timers[catTimers::IDLE] = this->durationIdleMax; // TODO behaviorRandomize?
 }
 
 void ACat::updateCatBehaviors(float DeltaTime) {
@@ -72,25 +72,26 @@ void ACat::updateCatBehaviors(float DeltaTime) {
 		// decide on a new behavior for the cat by setting the appropriate timer.
 		UE_LOG(LogTemp, Warning, TEXT("cat got bored"));
 
-		float random = (float )rand() / (float)RAND_MAX;
-		if (random < 0.25f) {
-			// return to idle, for a randomized amount of time
-			timers[catTimers::IDLE] = this->durationIdleMax * random;
+		float behaviorRandom = (float )rand() / (float)RAND_MAX;
+		float durationRandom = (float)rand() / (float)RAND_MAX;
+		if (behaviorRandom < 0.25f) {
+			// return to idle, for a behaviorRandomized amount of time
+			timers[catTimers::IDLE] = this->durationIdleMax * behaviorRandom;
 			PlayMontage(tailWagMontage);
 		}
-		if (0.25f <= random && random < 0.6f) {
+		if (0.25f <= behaviorRandom && behaviorRandom < 0.7f) {
 			// walk
-			timers[catTimers::WALK] = this->walkMax;
+			timers[catTimers::WALK] = this->walkMax * durationRandom;
 			PlayMontage(walkMontage);
 		}
 		// turn
-		if (0.6f <= random && random < 0.8f) {
-			timers[catTimers::TURN] = this->turnMax;
+		if (0.7f <= behaviorRandom && behaviorRandom < 0.85f) {
+			timers[catTimers::TURN] = this->turnMax * durationRandom;
 			turnLeft = true;
 			PlayMontage(leftTurnMontage);
 		}
-		if (0.8f <= random) {
-			timers[catTimers::TURN] = this->turnMax;
+		if (0.85f <= behaviorRandom) {
+			timers[catTimers::TURN] = this->turnMax * durationRandom;
 			turnLeft = false;
 			PlayMontage(rightTurnMontage);
 		}
