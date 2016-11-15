@@ -98,6 +98,13 @@ void ACat::updateCatBehaviors(float DeltaTime) {
 	}
 }
 
+void ACat::petPet() {
+	resetBoredom();
+	timers[catTimers::WALK] = -1.0f;
+	timers[catTimers::TURN] = -1.0f;
+	PlayMontage(tailWagMontage);
+}
+
 void ACat::step(float DeltaTime) {
 	resetBoredom(); // don't allow return to idle
 

@@ -135,11 +135,24 @@ void AQQCatsCharacter::RaycastThroughScreen() {
 		FHitResult firstHit;
 		if (World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
 			// Hit
+			AActor *firstActor = firstHit.GetActor();
 
-			if (clicked) {
+			if (clicked && firstActor->IsA(ACat::StaticClass())) {
+				// compute distance from player to cat
+				FVector displacement = GetActorLocation() - firstActor->GetActorLocation();
+				UE_LOG(LogTemp, Warning, TEXT("displacement is %f"), displacement.Size());
+
+				if (displacement.Size() < this->petCatDistance) {
+					ACat *cat = (ACat*)firstActor;
+					cat->petPet();
+				}
+
+				clicked = false;
+			}
+			else if (clicked) {
 				SpawnCucumber(firstHit, SpawnRotation, rayStart, rayEnd);
 				clicked = false;
-			} else if (firstHit.GetActor()->IsA(ACucumber::StaticClass())) {
+			} else if (firstActor->IsA(ACucumber::StaticClass())) {
 				hoverOverCucumber = true;
 			}
 			else {

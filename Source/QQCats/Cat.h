@@ -91,6 +91,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Behavior)
 		float turnStepSize;
 
+	void petPet();
+
 private:
 
 	USkeletalMeshComponent* SkeletalMeshComponent;
