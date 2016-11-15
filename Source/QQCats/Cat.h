@@ -40,7 +40,8 @@ public:
 
 	UMaterial* CatMaterial;
 
-	bool isLanded;
+	UPROPERTY(BlueprintReadOnly, Category = Behavior)
+		bool isLanded;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		FVector cucumberTargetOffset;
