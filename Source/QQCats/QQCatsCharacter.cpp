@@ -137,7 +137,7 @@ void AQQCatsCharacter::RaycastThroughScreen() {
 		if (World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
 			// Hit
 			AActor *firstActor = firstHit.GetActor();
-			if (firstActor->IsA(ACat::StaticClass())) {
+			if (firstActor->IsA(ACat::StaticClass()) && !clicked) {
 				// compute distance from player to cat
 				FVector displacement = GetActorLocation() - firstActor->GetActorLocation();
 				//UE_LOG(LogTemp, Warning, TEXT("displacement is %f"), displacement.Size());
