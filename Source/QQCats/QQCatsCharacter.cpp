@@ -45,6 +45,7 @@ AQQCatsCharacter::AQQCatsCharacter()
 	CucumberLimit = 15;
 	Score = CucumberLimit;
 	clicked = false;
+	canPetCat = false;
 }
 
 void AQQCatsCharacter::BeginPlay()
@@ -136,27 +137,34 @@ void AQQCatsCharacter::RaycastThroughScreen() {
 		if (World->LineTraceSingleByChannel(firstHit, rayStart, rayEnd, ECC_Visibility)) {
 			// Hit
 			AActor *firstActor = firstHit.GetActor();
-
-			if (clicked && firstActor->IsA(ACat::StaticClass())) {
+			if (firstActor->IsA(ACat::StaticClass())) {
 				// compute distance from player to cat
 				FVector displacement = GetActorLocation() - firstActor->GetActorLocation();
-				UE_LOG(LogTemp, Warning, TEXT("displacement is %f"), displacement.Size());
+				//UE_LOG(LogTemp, Warning, TEXT("displacement is %f"), displacement.Size());
 
 				if (displacement.Size() < this->petCatDistance) {
 					ACat *cat = (ACat*)firstActor;
+					canPetCat = true;
+				}
+			}
+			else if (clicked && firstActor->IsA(ACat::StaticClass())) {
+				if (canPetCat) {
+					ACat *cat = (ACat*)firstActor;
 					cat->petPet();
 				}
-
 				clicked = false;
 			}
 			else if (clicked) {
 				SpawnCucumber(firstHit, SpawnRotation, rayStart, rayEnd);
 				clicked = false;
+				canPetCat = false;
 			} else if (firstActor->IsA(ACucumber::StaticClass())) {
 				hoverOverCucumber = true;
+				canPetCat = false;
 			}
 			else {
 				hoverOverCucumber = false;
+				canPetCat = false;
 			}
 		}
 	}

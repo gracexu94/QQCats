@@ -71,7 +71,10 @@ public:
 	bool hoverOverCucumber;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		float petCatDistance;
+	float petCatDistance;
+
+	UPROPERTY(BlueprintReadOnly, Category = Gameplay)
+	bool canPetCat;
 
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
